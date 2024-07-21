@@ -1,18 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import AllConversatiions from "./AllConversations";
 import Home from "./Home";
 import Footer from "./Footer";
 import InteractiveChat from "./InteractiveChat";
-import ChatHeader from "./ChatHeader";
 
-const ChatPopup = ({
-  isVisible,
-  content,
-  showConversations,
-  setShowConversations,
-  showHome,
-  setShowHome,
-}) => {
+const ChatPopup = ({ isVisible, content }) => {
+  const [defaultPage, setDefaultPage] = useState("Home");
   if (!isVisible) return null;
 
   return (
@@ -26,24 +19,20 @@ const ChatPopup = ({
       className="fixed bottom-[84px] right-5 origin-bottom-right min-h-[80px] w-[400px] max-h[704px] bg-white rounded-[16px] overflow-hidden z-[2147483000]"
     >
       <div className="flex flex-col h-[110vh] w-[100vw] bg-white">
-        {showConversations ? (
-          <nav className="z-10 flex flex-col p-2 text-white text-opacity-70 bg-[#0071B2] w-[400px]">
-            <div className="flex flex-grow flex-row items-center justify-between gap-[2px] min-h-[48px] text-[18px] text-white">
-              <div></div>
-              <h1 className="py-2 px-1 font-bold text-center text-[18px] overflow-hidden truncate flex gap-2 items-center">
-                Messages
-              </h1>
-              <div></div>
-            </div>
-          </nav>
-        ) : null}
-
-        {!showConversations ? <ChatHeader /> : null}
-
-        <InteractiveChat />
-
-        {/* {showConversations ? <AllConversatiions /> : <Home />}
-        <div
+        {defaultPage === "Home" ? (
+          <Home defaultPage={defaultPage} setDefaultPage={setDefaultPage} />
+        ) : defaultPage === "messages" ? (
+          <AllConversatiions
+            defaultPage={defaultPage}
+            setDefaultPage={setDefaultPage}
+          />
+        ) : (
+          <InteractiveChat
+            defaultPage={defaultPage}
+            setDefaultPage={setDefaultPage}
+          />
+        )}
+        {/* <div
           style={{
             transition: "margin 0.3s ease-out, opacity 0.3s ease-out",
           }}
@@ -52,8 +41,7 @@ const ChatPopup = ({
           <div className="flex justify-between text-sm leading-[21px] h-[80px] w-[400px] bg-white">
             <button
               onClick={() => {
-                setShowHome(true);
-                setShowConversations(false);
+                setDefaultPage("Home");
               }}
               className="flex-1 flex flex-col items-center p-4 cursor-pointer transition-all duration-150 ease-linear leading-4 overflow-hidden text-clip text-center text-[#0071B2] font-semibold"
             >
@@ -90,8 +78,7 @@ const ChatPopup = ({
             </button>
             <button
               onClick={() => {
-                setShowConversations(true);
-                setShowHome(false);
+                setDefaultPage("messages");
               }}
               className="flex-1 flex flex-col items-center p-4 cursor-pointer transition-all duration-150 ease-linear leading-4 overflow-hidden text-clip text-center text-gray-800 hover:text-[#0071B2]"
             >

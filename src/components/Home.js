@@ -1,6 +1,65 @@
+import { useDispatch, useSelector } from "react-redux";
 import RecentConversation from "./RecentConversation";
+import SelectMenu from "./SelectMenu";
+import { setConversations } from "../../Redux/slices/conversationsSlice";
+import { useEffect } from "react";
 
-const Home = () => {
+const Home = ({ setDefaultPage }) => {
+  const conversations = useSelector((state) => state.conversations);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.post(
+          "https://api-iam.intercom.io/messenger/web/conversations",
+          {
+            app_id: "mbe6u52e",
+            v: 3,
+            g: "b3132c3846e21e0e6ed3598fe81b32650b6d479c",
+            s: "af57b613-40a7-48fa-a945-a3b985bd5491",
+            r: null,
+            platform: "web",
+            installation_type: "js-snippet",
+            "Idempotency-Key": "122e419100862fb8",
+            internal: null,
+            is_intersection_booted: null,
+            page_title: "Document",
+            user_active_company_id: -1,
+            user_data: {
+              anonymous_id: "041563f5-ee0b-4244-a692-15af912e1032",
+            },
+            page: 1,
+            per_page: 10,
+            source: "messengerPrefetchSpaceData",
+            self_serve_suggestions_match: false,
+            referer: "https://fe-assignment-lilac.vercel.app/",
+            device_identifier: "b449b746-5dc4-4601-835d-ecadc58fd8a2",
+          },
+          {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          }
+        );
+        dispatch(
+          setConversations({
+            conversations: response?.data?.conversations.map((conversation) => {
+              return {
+                ...conversation,
+                selected: false,
+              };
+            }),
+          })
+        );
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
+    };
+
+    fetchData();
+  }, [dispatch]);
+
   return (
     <div>
       <div className="w-[400px] bg-[#0071B2] overflow-y-scroll scroll-smooth pb-[15px] max-h-96 overflow-x-hidden bg-no-repeat relative text-white opacity-100">
@@ -37,7 +96,17 @@ const Home = () => {
               <ul className="list-none">
                 <li className="list-item">
                   <div className="-mt-2">
-                    <RecentConversation />
+                    <RecentConversation
+                      conversation={
+                        conversations?.conversations?.conversations[0]
+                      }
+                      setDefaultPage={setDefaultPage}
+                      dispatch={dispatch}
+                      conversations={
+                        conversations?.conversations?.conversations
+                      }
+                      setConversations={setConversations}
+                    />
                   </div>
                 </li>
               </ul>
@@ -78,6 +147,7 @@ const Home = () => {
           </div>
         </div>
       </div>
+      <SelectMenu setDefaultPage={setDefaultPage} />
     </div>
   );
 };

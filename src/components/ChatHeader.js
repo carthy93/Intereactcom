@@ -1,9 +1,12 @@
-const ChatHeader = () => {
+const ChatHeader = ({ setDefaultPage }) => {
   return (
     <div>
       <nav className="w-[400px] border border-b-gray-100 z-10 flex flex-col p-2 text-[#737373]">
         <div className="flex flex-grow flex-row items-center justify-between gap-[2px] min-h-[48px] text-[18px] text-[#1a1a1a]">
-          <div className="flex flex-1 justify-start">
+          <div
+            onClick={() => setDefaultPage("messages")}
+            className="flex flex-1 justify-start"
+          >
             <button className="flex items-center justify-center gap-[16px] p-2 relative rounded-[10px] w-fit max-w-full box-border cursor-pointer pointer-events-auto text-[14px] leading-[20px] font-semibold bg-transparent text-[#0071b2] whitespace-nowrap transition-colors duration-200 ease-in-out min-w-[48px] min-h-[48px]">
               <i
                 size="24"

@@ -1,6 +1,59 @@
-const RecentConversation = () => {
+// import { useDispatch } from "react-redux";
+
+const RecentConversation = ({
+  conversation,
+  conversations,
+  setDefaultPage,
+  dispatch,
+  setConversations,
+}) => {
+  // const dispatch = useDispatch();
+
+  const timeDifference = (createdAt) => {
+    const now = Date.now();
+    const diff = now - createdAt * 1000; // Convert seconds to milliseconds
+
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (days > 0) {
+      return `${days}d ago`;
+    } else if (hours > 0) {
+      return `${hours}h ago`;
+    } else if (minutes > 0) {
+      return `${minutes}m ago`;
+    } else {
+      return `${seconds}s ago`;
+    }
+  };
+
+  console.log("conversation", conversation);
   return (
-    <div className="flex justify-between box-border text-black p-4 items-start transition-colors duration-250 ease-in opacity-100 cursor-pointer">
+    <div
+      onClick={() => {
+        setDefaultPage("chat");
+        dispatch(
+          setConversations({
+            conversations: conversations.map((conv) => {
+              if (conv?.id === conversation?.id) {
+                return {
+                  ...conv,
+                  selected: true,
+                };
+              } else {
+                return {
+                  ...conv,
+                  selected: false,
+                };
+              }
+            }),
+          })
+        );
+      }}
+      className="flex justify-between box-border text-black p-4 items-start transition-colors duration-250 ease-in opacity-100 cursor-pointer"
+    >
       <div className="mr-2 self-center">
         <div className="cursor-pointer w-[40px] h-[40px] mx-auto my-0 inline-block align-middle relative leading-[36px] text-[18px] rounded-[16.7%]">
           <img
@@ -10,18 +63,23 @@ const RecentConversation = () => {
           />
         </div>
       </div>
-      <div className="mr-auto flex-1 text-sm leading-[21px] min-w-0">
+      <div className="mr-auto flex-1 text-sm leading-[21px] ml-1 min-w-0">
         <div className="flex flex-col cursor-pointer">
           <div className="overflow-hidden truncate text-sm font-normal">
             <span className="whitespace-nowrap">
-              Hello, how can I assist you today?
+              {conversation?.conversation_parts[0]?.blocks[0]?.content
+                .replaceAll("<p>", "")
+                .replaceAll("</p>", "")}
             </span>
           </div>
           <div className="font-normal text-sm text-[#666666] flex whitespace-pre-wrap">
             <div className="whitespace-nowrap overflow-hidden truncate mr-[4px]">
-              Fin
+              {conversation?.conversation_parts[0]?.author?.first_name}
             </div>
-            <div className="whitespace-nowrap">• 3h ago</div>
+            <div className="whitespace-nowrap">
+              •{" "}
+              {timeDifference(conversation?.conversation_parts[0]?.created_at)}
+            </div>
           </div>
         </div>
       </div>

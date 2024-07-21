@@ -1,14 +1,69 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Footer from "./Footer";
+import ChatHeader from "./ChatHeader";
+import UserMessage from "./UserMessage";
+import AiAgentMessage from "./AiAgentMessage";
+import { useSelector } from "react-redux";
 
-const InteractiveChat = () => {
+const InteractiveChat = ({ defaultPage, setDefaultPage }) => {
   const [text, setText] = useState("");
   const [message, setMessage] = useState();
+  const { conversations } = useSelector((state) => state.conversations);
+
+  console.log("conversations", conversations);
 
   const handleChange = (event) => {
     setText(event.target.value);
   };
+
+  useEffect(() => {
+    if (
+      conversations?.conversations?.find(
+        (conversation) => conversation?.selected
+      ).id
+    ) {
+      axios
+        .post(
+          `https://api-iam.intercom.io/messenger/web/conversations/${
+            conversations?.conversations?.find(
+              (conversation) => conversation?.selected
+            )?.id
+          }`,
+          {
+            app_id: "mbe6u52e",
+            v: 3,
+            g: "b3132c3846e21e0e6ed3598fe81b32650b6d479c",
+            s: "e2795d4f-f257-4aec-98d5-8988bc7a9e79",
+            r: "",
+            platform: "web",
+            installation_type: "js-snippet",
+            "Idempotency-Key": "f1cdbf4e20548b3f",
+            internal: "",
+            is_intersection_booted: null,
+            page_title: "Document",
+            user_active_company_id: -1,
+            user_data: {
+              anonymous_id: "041563f5-ee0b-4244-a692-15af912e1032",
+            },
+            request_origin: "Nexus New Comment",
+            referer: "https://fe-assignment-lilac.vercel.app/",
+            device_identifier: "b449b746-5dc4-4601-835d-ecadc58fd8a2",
+          },
+          {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          }
+        )
+        .then((res) => {
+          console.log(res?.data);
+        })
+        .catch((error) => {
+          console.error("Fetch error:", error);
+        });
+    }
+  }, [conversations]);
 
   const fetchData = async (e) => {
     e.preventDefault();
@@ -17,13 +72,13 @@ const InteractiveChat = () => {
         "https://api-iam.intercom.io/messenger/web/messages",
         {
           app_id: "mbe6u52e",
-          v: "3",
+          v: 3,
           g: "b3132c3846e21e0e6ed3598fe81b32650b6d479c",
-          s: "5383f1c2-d212-4504-a2ac-a2907b78efae",
+          s: "d83cded3-3524-43cf-9339-32a840d132fc",
           r: "",
           platform: "web",
           installation_type: "js-snippet",
-          "Idempotency-Key": "9c306f8118b6eec5",
+          "Idempotency-Key": "52e6426c14c91f9a",
           internal: "",
           is_intersection_booted: null,
           page_title: "Document",
@@ -36,11 +91,11 @@ const InteractiveChat = () => {
           composer_suggestions: [],
           snapshot_id: 32340958,
           composer_disabled: false,
-          messenger_open_request_id: "0000blufsak7o0mqmecg",
+          messenger_open_request_id: "002t57r9dlmd0t972cp0",
           blocks: JSON.stringify([
             {
               type: "paragraph",
-              text: "Hi",
+              text: "HI",
             },
           ]),
           referer: "https://fe-assignment-lilac.vercel.app/",
@@ -60,6 +115,7 @@ const InteractiveChat = () => {
 
   return (
     <div>
+      <ChatHeader setDefaultPage={setDefaultPage} />
       <div className="w-[400px] overflow-y-scroll h-80">
         <div className="p-[24px_20px_0] flex flex-wrap justify-between transition-transform duration-200 ease-in overflow-auto">
           <div className="flex flex-col justify-center gap-[8px] w-full px-[50px] pt-[20px] pb-0 box-border text-center leading-[21px] font-normal">
@@ -95,6 +151,7 @@ const InteractiveChat = () => {
               </div>
             </div>
           </div>
+
           <div className="pb-[8px]">
             <div className="relative text-left float-left pl-[45px] w-[calc(100%-45px)]">
               <div className="inline-block relative p-[17px_20px] rounded-[10px] w-auto max-w-[100%] text-black bg-[#f2f2f2]">
@@ -107,32 +164,10 @@ const InteractiveChat = () => {
               </div>
             </div>
           </div>
+          <AiAgentMessage />
 
-          <div className="relative text-left float-left pl-[45px] pb-[16px] w-[calc(100%-45px)]">
-            <div className="absolute left-0 bottom-[10px] pb-[16px]">
-              <div className="mx-auto inline-block align-middle cursor-default relative w-[32px] h-[32px] leading-[32px] text-[16px] rounded-[16.7%]">
-                <img
-                  className="rounded-{16.7%]"
-                  src="https://static.intercomassets.com/assets/default-avatars/fin/128-6a5eabbb84cc2b038b2afc6698ca0a974faf7adc9ea9f0fb3c3e78ac12543bc5.png"
-                  alt="Profile image for Fin"
-                />
-              </div>
-            </div>
-            <div className="inline-block relative p-[17px_20px] rounded-[10px] w-auto max-w-[100%] text-black bg-[#f2f2f2]">
-              <div className="text-[14px] leading-[1.4] m-0 min-h-[10px]">
-                So what brings you here today?
-              </div>
-              <div className=""></div>
-            </div>
-          </div>
-
-          <div className="relative text-left float-right pl-[48px] w-[calc(100%-48px)]">
-            <div className="inline-block mr-[-45px] relative p-[17px_20px] rounded-[10px] w-auto max-w-[100%] text-white bg-[#0071b2] float-right">
-              <div className="text-[14px] leading-[1.4] m-0 mb-[10px]">
-                what is your purpose here?
-              </div>
-            </div>
-          </div>
+          <AiAgentMessage />
+          <UserMessage />
         </div>
       </div>
 
