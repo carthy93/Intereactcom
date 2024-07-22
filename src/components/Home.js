@@ -3,10 +3,14 @@ import RecentConversation from "./RecentConversation";
 import SelectMenu from "./SelectMenu";
 import { setConversations } from "../../Redux/slices/conversationsSlice";
 import { useEffect } from "react";
+import { FIN_IMG_URL } from "../utils/constants";
+import axios from "axios";
 
-const Home = ({ setDefaultPage }) => {
+const Home = ({ defaultPage, setDefaultPage, open }) => {
   const conversations = useSelector((state) => state.conversations);
   const dispatch = useDispatch();
+
+  console.log("open", open);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -98,7 +102,7 @@ const Home = ({ setDefaultPage }) => {
                   <div className="-mt-2">
                     <RecentConversation
                       conversation={
-                        conversations?.conversations?.conversations[0]
+                        conversations?.conversations?.conversations?.[0]
                       }
                       setDefaultPage={setDefaultPage}
                       dispatch={dispatch}
@@ -113,13 +117,16 @@ const Home = ({ setDefaultPage }) => {
             </div>
           </div>
           <div className="relative box-border overflow-hidden p-0 bg-white rounded-lg shadow-md">
-            <div className="flex justify-between box-border text-black p-4 px-5 items-center opacity-100 cursor-pointer">
+            <div
+              onClick={() => setDefaultPage("chat")}
+              className="flex justify-between box-border text-black p-4 px-5 items-center opacity-100 cursor-pointer"
+            >
               <div className="mr-auto flex-1 text-sm leading-[21px] min-w-0">
                 <div className="text-black font-semibold text-sm leading-[150%] p-0 transition-colors duration-[250ms] ease-in-out">
-                  Ask a question
+                  {open?.new_conversation?.home_card?.text}
                 </div>
                 <div className="text-sm text-[#737376]">
-                  AI Agent and team can help
+                  {open?.new_conversation?.home_card?.subtitle}
                 </div>
               </div>
               <div className="ml-[8px] self-center">
@@ -127,8 +134,8 @@ const Home = ({ setDefaultPage }) => {
                   <div className="inline-block z-[20]">
                     <div className="m-auto inline-block align-middle relative w-[32px] h-[32px] leading-8 text-base rounded-[16.7%] border-solid border-[2px] border-white">
                       <img
-                        className="rounded-[16.7%] w-[32px] h-[32px]"
-                        src="https://static.intercomassets.com/assets/default-avatars/fin/128-6a5eabbb84cc2b038b2afc6698ca0a974faf7adc9ea9f0fb3c3e78ac12543bc5.png"
+                        className="rounded-[16.7%]"
+                        src={FIN_IMG_URL}
                         alt="Profile image for Fin"
                       />
                     </div>
@@ -147,7 +154,7 @@ const Home = ({ setDefaultPage }) => {
           </div>
         </div>
       </div>
-      <SelectMenu setDefaultPage={setDefaultPage} />
+      <SelectMenu defaultPage={defaultPage} setDefaultPage={setDefaultPage} />
     </div>
   );
 };

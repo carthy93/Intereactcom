@@ -1,15 +1,50 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Footer from "./Footer";
 import ChatHeader from "./ChatHeader";
 import UserMessage from "./UserMessage";
 import AiAgentMessage from "./AiAgentMessage";
 import { useSelector } from "react-redux";
+import { FIN_IMG_URL } from "../utils/constants";
 
 const InteractiveChat = ({ defaultPage, setDefaultPage }) => {
   const [text, setText] = useState("");
-  const [message, setMessage] = useState();
+  const [message, setMessage] = useState({});
+  const [socket, setSocket] = useState(null);
+  const [isAtTop, setIsAtTop] = useState(false);
   const { conversations } = useSelector((state) => state.conversations);
+
+  const divRef = useRef(null);
+
+  const scrollToBottom = () => {
+    if (divRef.current) {
+      divRef.current.scroll({
+        top: divRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const handleScroll = () => {
+    if (divRef.current) {
+      setIsAtTop(divRef.current.scrollTop === 0);
+    }
+  };
+  useEffect(() => {
+    if (divRef.current) {
+      divRef.current.addEventListener("scroll", handleScroll);
+    }
+
+    return () => {
+      if (divRef.current) {
+        divRef.current.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, [divRef.current]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [divRef.current]);
 
   console.log("conversations", conversations);
 
@@ -18,10 +53,40 @@ const InteractiveChat = ({ defaultPage, setDefaultPage }) => {
   };
 
   useEffect(() => {
+    // Create a WebSocket connection
+    const socket = new WebSocket(
+      "wss://nexus-websocket-a.intercom.io/pubsub/5-KWMJtpgaVEofEPjke8f7o720gtxgWOyZwIadqmHesnmUTzBkc1zQXRScryL_IACwn_sciFFxvAHLb26lDvCVwoyxD4Gkkx2VJWWZ?X-Nexus-New-Client=true&X-Nexus-Version=0.14.0&user_role=lead"
+    );
+
+    // Define the event handlers
+    socket.onopen = () => {
+      console.log("WebSocket connection opened");
+      // You can send data to the server here if needed
+    };
+
+    socket.onmessage = (event) => {
+      console.log("WebSocket message received:", event.data);
+    };
+
+    socket.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    socket.onclose = (event) => {
+      console.log("WebSocket connection closed:", event);
+    };
+
+    // Cleanup function to close the WebSocket connection when the component is unmounted
+    return () => {
+      socket.close();
+    };
+  }, []);
+
+  useEffect(() => {
     if (
       conversations?.conversations?.find(
         (conversation) => conversation?.selected
-      ).id
+      )?.id
     ) {
       axios
         .post(
@@ -58,12 +123,15 @@ const InteractiveChat = ({ defaultPage, setDefaultPage }) => {
         )
         .then((res) => {
           console.log(res?.data);
+          setMessage(res?.data);
         })
         .catch((error) => {
           console.error("Fetch error:", error);
         });
     }
   }, [conversations]);
+
+  console.log("message", message);
 
   const fetchData = async (e) => {
     e.preventDefault();
@@ -116,16 +184,16 @@ const InteractiveChat = ({ defaultPage, setDefaultPage }) => {
   return (
     <div>
       <ChatHeader setDefaultPage={setDefaultPage} />
-      <div className="w-[400px] overflow-y-scroll h-80">
+      <div ref={divRef} className="w-[400px] overflow-y-scroll h-80">
         <div className="p-[24px_20px_0] flex flex-wrap justify-between transition-transform duration-200 ease-in overflow-auto">
-          <div className="flex flex-col justify-center gap-[8px] w-full px-[50px] pt-[20px] pb-0 box-border text-center leading-[21px] font-normal">
+          <div className="w-full pt-[20px] pb-[24px] box-border text-center leading-[21px] font-normal">
             <div className="pb-[4px]">
-              <div className="flex flex-none items-center mr-0 whitespace-nowrap w-fit overflow-hidden leading-none">
+              <div className="flex flex-none justify-center items-center mr-0 whitespace-nowrap pb-[8px] overflow-hidden leading-none">
                 <div className="inline-block z-20">
                   <div className="mx-auto inline-block align-middle cursor-default relative w-[64px] h-[64px] leading-[64px] text-[32px] rounded-[16.7%]">
                     <img
                       className="rounded-[16.7%]"
-                      src="https://static.intercomassets.com/assets/default-avatars/fin/128-6a5eabbb84cc2b038b2afc6698ca0a974faf7adc9ea9f0fb3c3e78ac12543bc5.png"
+                      src={FIN_IMG_URL}
                       alt="Profile image for Fin"
                     />
                   </div>
@@ -134,7 +202,7 @@ const InteractiveChat = ({ defaultPage, setDefaultPage }) => {
               <h2 className="text-[16px] font-semibold transition-all duration-[300ms] ease-in text-black text-center">
                 AI Agent answers instantly
               </h2>
-              <div className="flex items-center gap-[6px]">
+              <div className="flex items-center justify-center pt-[8px] gap-[6px]">
                 <div className="flex flex-none items-center mr-0 whitespace-nowrap w-fit overflow-hidden leading-none">
                   <div className="inline-block z-10">
                     <div
@@ -164,10 +232,35 @@ const InteractiveChat = ({ defaultPage, setDefaultPage }) => {
               </div>
             </div>
           </div>
-          <AiAgentMessage />
 
-          <AiAgentMessage />
-          <UserMessage />
+          {message?.conversation_parts?.map((conversation_part) => {
+            console.log("conversation_part", conversation_part?.author?.type);
+            if (conversation_part?.author?.type === "Admin") {
+              return (
+                <AiAgentMessage
+                  key={conversation_part.id}
+                  messageText={
+                    conversation_part?.blocks[0]?.content
+                      ?.replaceAll("<p>", "")
+                      .replaceAll("</p>\n", "") ||
+                    conversation_part?.blocks[0]?.text
+                  }
+                />
+              );
+            } else {
+              return (
+                <UserMessage
+                  key={conversation_part.id}
+                  messageText={
+                    conversation_part?.blocks[0]?.text ||
+                    conversation_part?.blocks[0]?.content
+                      ?.replaceAll("<p>", "")
+                      .replaceAll("</p>\n", "")
+                  }
+                />
+              );
+            }
+          })}
         </div>
       </div>
 
@@ -222,18 +315,18 @@ const InteractiveChat = ({ defaultPage, setDefaultPage }) => {
                           cy="8"
                           r="6.525"
                           stroke="currentColor"
-                          stroke-width="1.7"
+                          strokeWidth="1.7"
                         ></circle>
                         <path
                           fill="currentColor"
-                          fill-rule="evenodd"
+                          fillRule="evenodd"
                           d="M5.819 7.536a1.1 1.1 0 1 0 0-2.2 1.1 1.1 0 0 0 0 2.2m4.363 0a1.1 1.1 0 1 0 0-2.2 1.1 1.1 0 0 0 0 2.2"
-                          clip-rule="evenodd"
+                          clipRule="evenodd"
                         ></path>
                         <path
                           stroke="currentColor"
-                          stroke-linecap="round"
-                          stroke-width="1.7"
+                          strokeLinecap="round"
+                          strokeWidth="1.7"
                           d="M10 10c-.44.604-1.172 1-2 1s-1.56-.396-2-1"
                         ></path>
                       </svg>
@@ -245,7 +338,7 @@ const InteractiveChat = ({ defaultPage, setDefaultPage }) => {
                     aria-label="Send a message…"
                     className="text-[#000]"
                     aria-disabled="true"
-                    tabindex="0"
+                    tabIndex="0"
                   >
                     <i
                       size="16"
@@ -259,9 +352,9 @@ const InteractiveChat = ({ defaultPage, setDefaultPage }) => {
                       >
                         <path
                           fill="currentColor"
-                          fill-rule="evenodd"
+                          fillRule="evenodd"
                           d="M7.4 1.899a.85.85 0 0 1 1.201 0l4.5 4.5A.85.85 0 1 1 11.9 7.6L8.85 4.552V13.5a.85.85 0 0 1-1.7 0V4.552L4.101 7.601A.85.85 0 1 1 2.9 6.399z"
-                          clip-rule="evenodd"
+                          clipRule="evenodd"
                         ></path>
                       </svg>
                     </i>
@@ -271,6 +364,35 @@ const InteractiveChat = ({ defaultPage, setDefaultPage }) => {
             </div>
           </form>
         </div>
+        {isAtTop && (
+          <div className="absolute left-0 right-0 z-30 flex flex-col items-center bottom-[104px]">
+            <button
+              onClick={fetchData}
+              className="w-fit max-w-full box-border p-2 relative rounded-2xl flex justify-center items-center gap-4 cursor-pointer pointer-events-auto text-[14px] leading-[20px] font-semibold whitespace-nowrap border-none shadow-[0px_8px_27px_0px_rgba(0,0,0,0.2)] transition-transform duration-[150ms] ease-out text-[#0071B2] bg-white"
+            >
+              <i
+                size="16"
+                className="flex items-center w-auto min-w-[16px] h-4"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fill="currentColor"
+                    fillRule="evenodd"
+                    d="M5.849 8.473a1.275 1.275 0 0 1 1.803 0L12 12.82l4.349-4.348a1.275 1.275 0 1 1 1.803 1.803l-5.25 5.25a1.275 1.275 0 0 1-1.803 0l-5.25-5.25a1.275 1.275 0 0 1 0-1.803Z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+              </i>
+            </button>
+          </div>
+        )}
+
         <Footer chat />
       </div>
     </div>

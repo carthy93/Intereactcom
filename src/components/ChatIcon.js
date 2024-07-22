@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
 import ChatPopup from "./ChatPopup";
-import AllConversatiions from "./AllConversations";
 
 const ChatIcon = () => {
   const [open, setOpen] = useState([]);
@@ -97,6 +96,7 @@ const ChatIcon = () => {
         setShowConversations={setShowConversations}
         showHome={showHome}
         setShowHome={setShowHome}
+        open={open}
       />
     </>
   );

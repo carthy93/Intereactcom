@@ -1,5 +1,7 @@
 // import { useDispatch } from "react-redux";
 
+import { FIN_IMG_URL } from "../utils/constants";
+
 const RecentConversation = ({
   conversation,
   conversations,
@@ -58,7 +60,7 @@ const RecentConversation = ({
         <div className="cursor-pointer w-[40px] h-[40px] mx-auto my-0 inline-block align-middle relative leading-[36px] text-[18px] rounded-[16.7%]">
           <img
             className="cursor-pointer w-[40px] h-[40px] rounded-[16.7%] overflow-clip leading-[36px] text=[18px] text-[#000]"
-            src="https://static.intercomassets.com/assets/default-avatars/fin/128-6a5eabbb84cc2b038b2afc6698ca0a974faf7adc9ea9f0fb3c3e78ac12543bc5.png"
+            src={FIN_IMG_URL}
             alt="Profile image for Fin"
           />
         </div>

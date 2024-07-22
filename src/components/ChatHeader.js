@@ -1,3 +1,5 @@
+import { FIN_IMG_URL } from "../utils/constants";
+
 const ChatHeader = ({ setDefaultPage }) => {
   return (
     <div>
@@ -5,7 +7,7 @@ const ChatHeader = ({ setDefaultPage }) => {
         <div className="flex flex-grow flex-row items-center justify-between gap-[2px] min-h-[48px] text-[18px] text-[#1a1a1a]">
           <div
             onClick={() => setDefaultPage("messages")}
-            className="flex flex-1 justify-start"
+            className="flex flex-1 justify-start rounded-[16.7%] hover:bg-[#E5F1F7]"
           >
             <button className="flex items-center justify-center gap-[16px] p-2 relative rounded-[10px] w-fit max-w-full box-border cursor-pointer pointer-events-auto text-[14px] leading-[20px] font-semibold bg-transparent text-[#0071b2] whitespace-nowrap transition-colors duration-200 ease-in-out min-w-[48px] min-h-[48px]">
               <i
@@ -22,9 +24,9 @@ const ChatHeader = ({ setDefaultPage }) => {
                 >
                   <path
                     stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="1.7"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.7"
                     d="m14 18-6-6 6-6"
                   ></path>
                 </svg>
@@ -39,7 +41,7 @@ const ChatHeader = ({ setDefaultPage }) => {
                     <div className="mx-auto inline-block align-middle relative w-[34px] h-[34px] leading-[32px] text-[16px] rounded-[16.7%] border-2 border-solid border-white">
                       <img
                         className="rounded-[16.7%]"
-                        src="https://static.intercomassets.com/assets/default-avatars/fin/128-6a5eabbb84cc2b038b2afc6698ca0a974faf7adc9ea9f0fb3c3e78ac12543bc5.png"
+                        src={FIN_IMG_URL}
                         alt="Profile image for Fin"
                       />
                     </div>
