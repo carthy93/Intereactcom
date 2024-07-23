@@ -181,8 +181,11 @@ const InteractiveChat = ({ defaultPage, setDefaultPage }) => {
   return (
     <div>
       <ChatHeader setDefaultPage={setDefaultPage} />
-      <div ref={divRef} className="w-[400px] overflow-y-scroll h-80">
-        <div className="p-[24px_20px_0] flex flex-wrap justify-between transition-transform duration-200 ease-in overflow-auto w-[400px]">
+      <div
+        ref={divRef}
+        className="w-[400px] overflow-y-auto overflow-hidden h-80"
+      >
+        <div className="p-[24px_20px_0] flex flex-wrap justify-between transition-transform duration-200 ease-in overflow-hidden overflow-y-auto w-[400px]">
           <div className="w-full pt-[20px] pb-[24px] box-border text-center leading-[21px] font-normal">
             <div className="pb-[4px]">
               <div className="flex flex-none justify-center items-center mr-0 whitespace-nowrap pb-[8px] overflow-hidden leading-none">
