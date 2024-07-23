@@ -31,7 +31,6 @@ const RecentConversation = ({
     }
   };
 
-  console.log("conversation", conversation);
   return (
     <div
       onClick={() => {

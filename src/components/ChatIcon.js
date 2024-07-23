@@ -36,8 +36,6 @@ const ChatIcon = () => {
           },
         }
       );
-
-      console.log(response.data);
       setOpen(response.data);
       setHasFetchedData(true);
     } catch (error) {

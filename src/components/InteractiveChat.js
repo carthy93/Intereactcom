@@ -46,8 +46,6 @@ const InteractiveChat = ({ defaultPage, setDefaultPage }) => {
     scrollToBottom();
   }, [divRef.current]);
 
-  console.log("conversations", conversations);
-
   const handleChange = (event) => {
     setText(event.target.value);
   };
@@ -122,7 +120,6 @@ const InteractiveChat = ({ defaultPage, setDefaultPage }) => {
           }
         )
         .then((res) => {
-          console.log(res?.data);
           setMessage(res?.data);
         })
         .catch((error) => {
@@ -130,8 +127,6 @@ const InteractiveChat = ({ defaultPage, setDefaultPage }) => {
         });
     }
   }, [conversations]);
-
-  console.log("message", message);
 
   const fetchData = async (e) => {
     e.preventDefault();
@@ -175,7 +170,9 @@ const InteractiveChat = ({ defaultPage, setDefaultPage }) => {
           },
         }
       );
-      console.log(response.data);
+      if (response.data) {
+        setText("");
+      }
     } catch (error) {
       console.error("Fetch error:", error);
     }
@@ -234,7 +231,6 @@ const InteractiveChat = ({ defaultPage, setDefaultPage }) => {
           </div>
 
           {message?.conversation_parts?.map((conversation_part) => {
-            console.log("conversation_part", conversation_part?.author?.type);
             if (conversation_part?.author?.type === "Admin") {
               return (
                 <AiAgentMessage
@@ -290,7 +286,7 @@ const InteractiveChat = ({ defaultPage, setDefaultPage }) => {
                   ></button>
                 </div>
               </div>
-              <div className="absolute flex items-end right-2 bottom-0 px-[8px] pl-[7px]">
+              <div className="absolute flex items-end right-2 bottom-0 px-[8px] pl-[7px] pb-[4px]">
                 <div className="flex items-center gap-[16px] pb-[7px] min-h-[32px]">
                   <button
                     title="Emoji picker"
@@ -367,7 +363,7 @@ const InteractiveChat = ({ defaultPage, setDefaultPage }) => {
         {isAtTop && (
           <div className="absolute left-0 right-0 z-30 flex flex-col items-center bottom-[104px]">
             <button
-              onClick={fetchData}
+              onClick={scrollToBottom}
               className="w-fit max-w-full box-border p-2 relative rounded-2xl flex justify-center items-center gap-4 cursor-pointer pointer-events-auto text-[14px] leading-[20px] font-semibold whitespace-nowrap border-none shadow-[0px_8px_27px_0px_rgba(0,0,0,0.2)] transition-transform duration-[150ms] ease-out text-[#0071B2] bg-white"
             >
               <i

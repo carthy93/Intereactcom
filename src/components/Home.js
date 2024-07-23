@@ -4,65 +4,16 @@ import SelectMenu from "./SelectMenu";
 import { setConversations } from "../../Redux/slices/conversationsSlice";
 import { useEffect } from "react";
 import { FIN_IMG_URL } from "../utils/constants";
-import axios from "axios";
+import useGetConversations from "../hooks/useGetConversations";
 
 const Home = ({ defaultPage, setDefaultPage, open }) => {
   const conversations = useSelector((state) => state.conversations);
   const dispatch = useDispatch();
-
-  console.log("open", open);
+  const { getConversations, loading } = useGetConversations();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.post(
-          "https://api-iam.intercom.io/messenger/web/conversations",
-          {
-            app_id: "mbe6u52e",
-            v: 3,
-            g: "b3132c3846e21e0e6ed3598fe81b32650b6d479c",
-            s: "af57b613-40a7-48fa-a945-a3b985bd5491",
-            r: null,
-            platform: "web",
-            installation_type: "js-snippet",
-            "Idempotency-Key": "122e419100862fb8",
-            internal: null,
-            is_intersection_booted: null,
-            page_title: "Document",
-            user_active_company_id: -1,
-            user_data: {
-              anonymous_id: "041563f5-ee0b-4244-a692-15af912e1032",
-            },
-            page: 1,
-            per_page: 10,
-            source: "messengerPrefetchSpaceData",
-            self_serve_suggestions_match: false,
-            referer: "https://fe-assignment-lilac.vercel.app/",
-            device_identifier: "b449b746-5dc4-4601-835d-ecadc58fd8a2",
-          },
-          {
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-          }
-        );
-        dispatch(
-          setConversations({
-            conversations: response?.data?.conversations.map((conversation) => {
-              return {
-                ...conversation,
-                selected: false,
-              };
-            }),
-          })
-        );
-      } catch (error) {
-        console.error("Fetch error:", error);
-      }
-    };
-
-    fetchData();
-  }, [dispatch]);
+    getConversations();
+  }, []);
 
   return (
     <div>
@@ -92,30 +43,38 @@ const Home = ({ defaultPage, setDefaultPage, open }) => {
           </div>
         </div>
         <div className="flex flex-col gap-3 -mt-32 py-0 px-[16px]">
-          <div className="relative box-border overflow-hidden p-4 px-5 bg-white rounded-lg shadow-md">
-            <div className="text-black font-semibold text-sm leading-[150%] cursor-pointer p-0 transition-colors duration-[250ms] ease-in-out">
-              Recent message
+          {loading ? (
+            <div className="relative flex flex-col gap-y-2 justify-between box-border p-4 px-5 rounded-lg h-[90px] bg-[#fff]">
+              <div className="bg-gray-200 w-[55%] h-[25px] rounded-md"></div>
+              <div className="h-[40px] bg-gray-200 rounded-md"></div>
             </div>
-            <div className="p-0 -ml-5 -mr-5 -mb-4 cursor-pointer">
-              <ul className="list-none">
-                <li className="list-item">
-                  <div className="-mt-2">
-                    <RecentConversation
-                      conversation={
-                        conversations?.conversations?.conversations?.[0]
-                      }
-                      setDefaultPage={setDefaultPage}
-                      dispatch={dispatch}
-                      conversations={
-                        conversations?.conversations?.conversations
-                      }
-                      setConversations={setConversations}
-                    />
-                  </div>
-                </li>
-              </ul>
+          ) : (
+            <div className="relative box-border overflow-hidden p-4 px-5 bg-white rounded-lg shadow-md">
+              <div className="text-black font-semibold text-sm leading-[150%] cursor-pointer p-0 transition-colors duration-[250ms] ease-in-out">
+                Recent message
+              </div>
+              <div className="p-0 -ml-5 -mr-5 -mb-4 cursor-pointer">
+                <ul className="list-none">
+                  <li className="list-item">
+                    <div className="-mt-2">
+                      <RecentConversation
+                        conversation={
+                          conversations?.conversations?.conversations?.[0]
+                        }
+                        setDefaultPage={setDefaultPage}
+                        dispatch={dispatch}
+                        conversations={
+                          conversations?.conversations?.conversations
+                        }
+                        setConversations={setConversations}
+                      />
+                    </div>
+                  </li>
+                </ul>
+              </div>
             </div>
-          </div>
+          )}
+
           <div className="relative box-border overflow-hidden p-0 bg-white rounded-lg shadow-md">
             <div
               onClick={() => setDefaultPage("chat")}
