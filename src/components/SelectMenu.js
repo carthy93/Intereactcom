@@ -124,7 +124,6 @@ const SelectMenu = ({ defaultPage, setDefaultPage }) => {
                 height="24"
                 fill="currentColor"
                 viewBox="0 0 24 24"
-                class="icon"
               >
                 <mask id="b0b1a" fill="#fff">
                   <path
