@@ -6,20 +6,25 @@ import useGetPing from "../hooks/useGetPing";
 import { useDispatch, useSelector } from "react-redux";
 import { setUid } from "../Redux/slices/uIdSlice";
 import { usePingContext } from "./PingContext";
+import { setSocketUrl } from "../Redux/slices/socketUrlSlice";
 
 const ChatIcon = () => {
   const [open, setOpen] = useState([]);
   const [isPopupVisible, setPopupVisible] = useState(false);
   const [hasFetchedData, setHasFetchedData] = useState(false);
-  const [showConversations, setShowConversations] = useState(false);
-  const [showHome, setShowHome] = useState(false);
 
   const dispatch = useDispatch();
   const uId = useSelector((state) => state.uId);
+  const socketUrl = useSelector((state) => state.socketUrl);
+  const expectedSocketUrl = socketUrl?.socketUrl.replaceAll("https", "wss");
 
   const { getPing } = useGetPing();
   const { pingData } = usePingContext();
-  const webSocketUrl = pingData?.modules?.rtm?.endpoints?.[0];
+  const webUrl =
+    pingData?.modules?.rtm?.endpoints?.[0] &&
+    pingData?.modules?.rtm?.endpoints?.[0];
+
+  console.log("webUrl", webUrl);
 
   useEffect(() => {
     if (!uId?.uId) {
@@ -28,6 +33,41 @@ const ChatIcon = () => {
     if (uId?.uId) {
       getPing();
     }
+  }, []);
+
+  useEffect(() => {
+    if (!socketUrl?.socketUrl)
+      dispatch(setSocketUrl(pingData?.modules?.rtm?.endpoints?.[0]));
+  }, []);
+
+  useEffect(() => {
+    // Create a WebSocket connection
+    const socket = new WebSocket(
+      `${expectedSocketUrl}?X-Nexus-New-Client=true&X-Nexus-Version=0.14.0&user_role=lead`
+    );
+
+    // Define the event handlers
+    socket.onopen = () => {
+      console.log("WebSocket connection opened");
+      // You can send data to the server here if needed
+    };
+
+    socket.onmessage = (event) => {
+      console.log("WebSocket message received:", event.data);
+    };
+
+    socket.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    socket.onclose = (event) => {
+      console.log("WebSocket connection closed:", event);
+    };
+
+    // Cleanup function to close the WebSocket connection when the component is unmounted
+    return () => {
+      socket.close();
+    };
   }, []);
 
   const fetchData = async () => {
@@ -110,16 +150,8 @@ const ChatIcon = () => {
           )}
         </div>
       </div>
-      <ChatPopup
-        isVisible={isPopupVisible}
-        content={JSON.stringify(open, null, 2)}
-        showConversations={showConversations}
-        setShowConversations={setShowConversations}
-        showHome={showHome}
-        setShowHome={setShowHome}
-        open={open}
-        webSocketUrl={webSocketUrl}
-      />
+
+      <ChatPopup isVisible={isPopupVisible} open={open} />
     </>
   );
 };

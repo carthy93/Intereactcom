@@ -1,4 +1,3 @@
-import React from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { usePingContext } from "../components/PingContext";
@@ -39,7 +38,7 @@ export default function useGetPing() {
         }
       )
       .then((res) => {
-        setPingData(res.data);
+        setPingData(res?.data);
       })
       .catch((error) => {
         console.error("Fetch error:", error);

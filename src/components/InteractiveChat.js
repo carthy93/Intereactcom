@@ -7,7 +7,7 @@ import AiAgentMessage from "./AiAgentMessage";
 import { useSelector } from "react-redux";
 import { FIN_IMG_URL } from "../utils/constants";
 
-const InteractiveChat = ({ defaultPage, setDefaultPage, webSocketUrl }) => {
+const InteractiveChat = ({ defaultPage, setDefaultPage }) => {
   const [text, setText] = useState("");
   const [message, setMessage] = useState({});
   const [socket, setSocket] = useState(null);
@@ -31,6 +31,7 @@ const InteractiveChat = ({ defaultPage, setDefaultPage, webSocketUrl }) => {
       setIsAtTop(divRef.current.scrollTop === 0);
     }
   };
+
   useEffect(() => {
     if (divRef.current) {
       divRef.current.addEventListener("scroll", handleScroll);
@@ -50,36 +51,6 @@ const InteractiveChat = ({ defaultPage, setDefaultPage, webSocketUrl }) => {
   const handleChange = (event) => {
     setText(event.target.value);
   };
-
-  useEffect(() => {
-    // Create a WebSocket connection
-    const socket = new WebSocket(
-      "wss://nexus-websocket-a.intercom.io/pubsub/5-LeRMluY6gi_z7JrBkxSUBAjXswfJ8DvMHNL4E_Mo6mDWuR7ajvo84waEQ3-ERsnmxYndsWveTuG6bVOZpLdKaO6zs7J5Q9IS0aTw?X-Nexus-New-Client=true&X-Nexus-Version=0.14.0&user_role=lead"
-    );
-
-    // Define the event handlers
-    socket.onopen = () => {
-      console.log("WebSocket connection opened");
-      // You can send data to the server here if needed
-    };
-
-    socket.onmessage = (event) => {
-      console.log("WebSocket message received:", event.data);
-    };
-
-    socket.onerror = (error) => {
-      console.error("WebSocket error:", error);
-    };
-
-    socket.onclose = (event) => {
-      console.log("WebSocket connection closed:", event);
-    };
-
-    // Cleanup function to close the WebSocket connection when the component is unmounted
-    return () => {
-      socket.close();
-    };
-  }, []);
 
   useEffect(() => {
     if (
