@@ -1,6 +1,11 @@
 import axios from "axios";
-import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { useEffect, useState } from "react";
 import ChatPopup from "./ChatPopup";
+import useGetPing from "../hooks/useGetPing";
+import { useDispatch, useSelector } from "react-redux";
+import { setUid } from "../Redux/slices/uIdSlice";
+import { usePingContext } from "./PingContext";
 
 const ChatIcon = () => {
   const [open, setOpen] = useState([]);
@@ -8,6 +13,22 @@ const ChatIcon = () => {
   const [hasFetchedData, setHasFetchedData] = useState(false);
   const [showConversations, setShowConversations] = useState(false);
   const [showHome, setShowHome] = useState(false);
+
+  const dispatch = useDispatch();
+  const uId = useSelector((state) => state.uId);
+
+  const { getPing } = useGetPing();
+  const { pingData } = usePingContext();
+  const webSocketUrl = pingData?.modules?.rtm?.endpoints?.[0];
+
+  useEffect(() => {
+    if (!uId?.uId) {
+      dispatch(setUid(uuidv4()));
+    }
+    if (uId?.uId) {
+      getPing();
+    }
+  }, []);
 
   const fetchData = async () => {
     try {
@@ -26,7 +47,9 @@ const ChatIcon = () => {
           is_intersection_booted: false,
           page_title: "Document",
           user_active_company_id: -1,
-          user_data: { anonymous_id: "041563f5-ee0b-4244-a692-15af912e1032" },
+          user_data: JSON.stringify({
+            anonymous_id: "041563f5-ee0b-4244-a692-15af912e1032",
+          }),
           referer: "https://fe-assignment-lilac.vercel.app/",
           device_identifier: "b449b746-5dc4-4601-835d-ecadc58fd8a2",
         },
@@ -95,6 +118,7 @@ const ChatIcon = () => {
         showHome={showHome}
         setShowHome={setShowHome}
         open={open}
+        webSocketUrl={webSocketUrl}
       />
     </>
   );

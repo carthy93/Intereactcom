@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { conversationsReducer } from "./slices";
+import { conversationsReducer, uIdReducer } from "./slices";
 
 import SimpleCrypto from "simple-crypto-js";
 
@@ -37,6 +37,7 @@ function loadFromLocalStorage() {
 export const store = configureStore({
   reducer: {
     conversations: conversationsReducer,
+    uId: uIdReducer,
   },
   devTools: process.env.NODE_ENV !== "production",
   preloadedState: loadFromLocalStorage(),

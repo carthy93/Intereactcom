@@ -7,12 +7,13 @@ import AiAgentMessage from "./AiAgentMessage";
 import { useSelector } from "react-redux";
 import { FIN_IMG_URL } from "../utils/constants";
 
-const InteractiveChat = ({ defaultPage, setDefaultPage }) => {
+const InteractiveChat = ({ defaultPage, setDefaultPage, webSocketUrl }) => {
   const [text, setText] = useState("");
   const [message, setMessage] = useState({});
   const [socket, setSocket] = useState(null);
   const [isAtTop, setIsAtTop] = useState(false);
   const { conversations } = useSelector((state) => state.conversations);
+  const uId = useSelector((state) => state.uId);
 
   const divRef = useRef(null);
 
@@ -53,7 +54,7 @@ const InteractiveChat = ({ defaultPage, setDefaultPage }) => {
   useEffect(() => {
     // Create a WebSocket connection
     const socket = new WebSocket(
-      "wss://nexus-websocket-a.intercom.io/pubsub/5-KWMJtpgaVEofEPjke8f7o720gtxgWOyZwIadqmHesnmUTzBkc1zQXRScryL_IACwn_sciFFxvAHLb26lDvCVwoyxD4Gkkx2VJWWZ?X-Nexus-New-Client=true&X-Nexus-Version=0.14.0&user_role=lead"
+      "wss://nexus-websocket-a.intercom.io/pubsub/5-LeRMluY6gi_z7JrBkxSUBAjXswfJ8DvMHNL4E_Mo6mDWuR7ajvo84waEQ3-ERsnmxYndsWveTuG6bVOZpLdKaO6zs7J5Q9IS0aTw?X-Nexus-New-Client=true&X-Nexus-Version=0.14.0&user_role=lead"
     );
 
     // Define the event handlers
@@ -106,9 +107,9 @@ const InteractiveChat = ({ defaultPage, setDefaultPage }) => {
             is_intersection_booted: null,
             page_title: "Document",
             user_active_company_id: -1,
-            user_data: {
+            user_data: JSON.stringify({
               anonymous_id: "041563f5-ee0b-4244-a692-15af912e1032",
-            },
+            }),
             request_origin: "Nexus New Comment",
             referer: "https://fe-assignment-lilac.vercel.app/",
             device_identifier: "b449b746-5dc4-4601-835d-ecadc58fd8a2",
@@ -136,33 +137,33 @@ const InteractiveChat = ({ defaultPage, setDefaultPage }) => {
         {
           app_id: "mbe6u52e",
           v: 3,
-          g: "b3132c3846e21e0e6ed3598fe81b32650b6d479c",
-          s: "d83cded3-3524-43cf-9339-32a840d132fc",
+          g: "63d8117e5ca2800d0b4764a12fc8764f84d527a4",
+          s: "28e6bc24-530e-4751-b288-a5c141137381",
           r: "",
           platform: "web",
           installation_type: "js-snippet",
-          "Idempotency-Key": "52e6426c14c91f9a",
+          "Idempotency-Key": "d75cc63d30ef633b",
           internal: "",
           is_intersection_booted: null,
           page_title: "Document",
           user_active_company_id: -1,
           user_data: JSON.stringify({
-            anonymous_id: "041563f5-ee0b-4244-a692-15af912e1032",
+            anonymous_id: uId?.uId,
           }),
           created_at: new Date().toString(),
           self_serve_suggestions_match: false,
           composer_suggestions: [],
           snapshot_id: 32340958,
           composer_disabled: false,
-          messenger_open_request_id: "002t57r9dlmd0t972cp0",
+          messenger_open_request_id: "0004ciglur70vlg6b9ig",
           blocks: JSON.stringify([
             {
               type: "paragraph",
-              text: "HI",
+              text: { text },
             },
           ]),
           referer: "https://fe-assignment-lilac.vercel.app/",
-          device_identifier: "b449b746-5dc4-4601-835d-ecadc58fd8a2",
+          device_identifier: "1a3b7401-8fb7-4420-a863-a87c03f082f9",
         },
         {
           headers: {

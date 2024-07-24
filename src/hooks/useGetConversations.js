@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { setConversations } from "../../Redux/slices/conversationsSlice";
+import { setConversations } from "../Redux/slices/conversationsSlice";
 import axios from "axios";
 
 export default function useGetConversations() {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+
   const getConversations = () => {
     setLoading(true);
     axios
@@ -24,9 +25,9 @@ export default function useGetConversations() {
           is_intersection_booted: null,
           page_title: "Document",
           user_active_company_id: -1,
-          user_data: {
+          user_data: JSON.stringify({
             anonymous_id: "041563f5-ee0b-4244-a692-15af912e1032",
-          },
+          }),
           page: 1,
           per_page: 10,
           source: "messengerPrefetchSpaceData",

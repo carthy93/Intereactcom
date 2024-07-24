@@ -2,7 +2,7 @@ import axios from "axios";
 import useGetConversations from "../hooks/useGetConversations";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setConversations } from "../../Redux/slices/conversationsSlice";
+import { setConversations } from "../Redux/slices/conversationsSlice";
 import RecentConversation from "./RecentConversation";
 import SelectMenu from "./SelectMenu";
 

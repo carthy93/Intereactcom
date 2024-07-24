@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import RecentConversation from "./RecentConversation";
 import SelectMenu from "./SelectMenu";
-import { setConversations } from "../../Redux/slices/conversationsSlice";
+import { setConversations } from "../Redux/slices/conversationsSlice";
 import { useEffect } from "react";
 import { FIN_IMG_URL } from "../utils/constants";
 import useGetConversations from "../hooks/useGetConversations";

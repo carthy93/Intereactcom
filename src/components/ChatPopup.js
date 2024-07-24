@@ -4,7 +4,7 @@ import Home from "./Home";
 import Footer from "./Footer";
 import InteractiveChat from "./InteractiveChat";
 
-const ChatPopup = ({ isVisible, content, open }) => {
+const ChatPopup = ({ isVisible, content, open, webSocketUrl }) => {
   const [defaultPage, setDefaultPage] = useState("Home");
   if (!isVisible) return null;
 
@@ -34,6 +34,7 @@ const ChatPopup = ({ isVisible, content, open }) => {
           <InteractiveChat
             defaultPage={defaultPage}
             setDefaultPage={setDefaultPage}
+            webSocketUrl={webSocketUrl}
           />
         )}
       </div>
