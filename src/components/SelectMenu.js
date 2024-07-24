@@ -100,16 +100,16 @@ const SelectMenu = ({ defaultPage, setDefaultPage }) => {
               >
                 <mask id="c153a" fill="#fff">
                   <path
-                    fill-rule="evenodd"
+                    fillRule="evenodd"
                     d="M22 5a3 3 0 0 0-3-3H5a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10.558l3.883 3.87c.946.942 2.559.272 2.559-1.063zm-4.15 2.85A.85.85 0 0 0 17 7H7a.85.85 0 0 0 0 1.7h10c.47 0 .85-.38.85-.85m-5 4A.85.85 0 0 0 12 11H7a.85.85 0 0 0 0 1.7h5c.47 0 .85-.38.85-.85"
-                    clip-rule="evenodd"
+                    clipRule="evenodd"
                   ></path>
                 </mask>
                 <path
                   fill="currentColor"
-                  fill-rule="evenodd"
+                  fillRule="evenodd"
                   d="M22 5a3 3 0 0 0-3-3H5a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10.558l3.883 3.87c.946.942 2.559.272 2.559-1.063zm-4.15 2.85A.85.85 0 0 0 17 7H7a.85.85 0 0 0 0 1.7h10c.47 0 .85-.38.85-.85m-5 4A.85.85 0 0 0 12 11H7a.85.85 0 0 0 0 1.7h5c.47 0 .85-.38.85-.85"
-                  clip-rule="evenodd"
+                  clipRule="evenodd"
                 ></path>
                 <path
                   fill="currentColor"

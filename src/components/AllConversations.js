@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setConversations } from "../Redux/slices/conversationsSlice";
 import RecentConversation from "./RecentConversation";
 import SelectMenu from "./SelectMenu";
+import NoMessages from "./NoMessages";
 
 const AllConversations = ({ defaultPage, setDefaultPage }) => {
   const dispatch = useDispatch();
@@ -27,22 +28,28 @@ const AllConversations = ({ defaultPage, setDefaultPage }) => {
         </div>
       </nav>
       <div className="w-[400px] h-[58%] overflow-y-auto">
-        <ul>
-          {conversations?.conversations?.conversations?.map((conversation) => (
-            <li key={conversation?.id} className="hover:bg-[#E5F1F7]">
-              <RecentConversation
-                conversation={conversation}
-                setDefaultPage={setDefaultPage}
-                dispatch={dispatch}
-                conversations={conversations?.conversations?.conversations}
-                setConversations={setConversations}
-              />
-              <div className="px-5 text-gray-50">
-                <hr />
-              </div>
-            </li>
-          ))}
-        </ul>
+        {conversations?.conversations?.conversations?.length ? (
+          <ul>
+            {conversations?.conversations?.conversations?.map(
+              (conversation) => (
+                <li key={conversation?.id} className="hover:bg-[#E5F1F7]">
+                  <RecentConversation
+                    conversation={conversation}
+                    setDefaultPage={setDefaultPage}
+                    dispatch={dispatch}
+                    conversations={conversations?.conversations?.conversations}
+                    setConversations={setConversations}
+                  />
+                  <div className="px-5 text-gray-50">
+                    <hr />
+                  </div>
+                </li>
+              )
+            )}
+          </ul>
+        ) : (
+          <NoMessages setDefaultPage={setDefaultPage} />
+        )}
         <div
           onClick={() => setDefaultPage("chat")}
           className="absolute bottom-[25%] left-1/2 transform -translate-x-1/2"

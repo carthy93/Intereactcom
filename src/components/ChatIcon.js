@@ -20,11 +20,6 @@ const ChatIcon = () => {
 
   const { getPing } = useGetPing();
   const { pingData } = usePingContext();
-  const webUrl =
-    pingData?.modules?.rtm?.endpoints?.[0] &&
-    pingData?.modules?.rtm?.endpoints?.[0];
-
-  console.log("webUrl", webUrl);
 
   useEffect(() => {
     if (!uId?.uId) {
